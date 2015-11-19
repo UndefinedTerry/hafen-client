@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 
-public class QualityList {
+public class QualityList extends ItemInfo {
     public static final String classname = "haven.res.ui.tt.q.qbuff.QBuff";
     public static final Comparator<Quality> QSORTER = new Comparator<Quality>() {
 	@Override
@@ -22,7 +22,8 @@ public class QualityList {
     private final Map<SingleType, Quality> singles = new HashMap<>();
     private final boolean isEmpty;
 
-    public QualityList(List<ItemInfo> list) {
+    public QualityList(Owner owner, List<ItemInfo> list) {
+	super(owner);
 	qualities = new LinkedList<Quality>();
 	for (ItemInfo inf : list) {
 	    if(inf.getClass().getName().equals(classname)) {
@@ -175,8 +176,8 @@ public class QualityList {
 
 	public abstract Quality get(List<Quality> qualities);
 
-	public Tex tex(){
-	    if(tex == null){
+	public Tex tex() {
+	    if(tex == null) {
 		tex = Text.render(name()).tex();
 	    }
 	    return tex;

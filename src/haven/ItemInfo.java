@@ -298,7 +298,27 @@ public abstract class ItemInfo {
 		throw(new ClassCastException("Unexpected object type " + o.getClass() + " in item info array."));
 	    }
 	}
+	addQuality(owner, ret);
 	return(ret);
+    }
+
+    private static void addQuality(Owner owner, List<ItemInfo> info) {
+	List<ItemInfo.Contents> contents = ItemInfo.findall(ItemInfo.Contents.class, info);
+	List<ItemInfo> qualities = null;
+	if(!contents.isEmpty()) {
+	    for (ItemInfo.Contents content : contents) {
+		List<ItemInfo> tmp = ItemInfo.findall(QualityList.classname, content.sub);
+		if(!tmp.isEmpty()) {
+		    qualities = tmp;
+		}
+	    }
+	}
+	if(qualities == null || qualities.isEmpty()) {
+	    qualities = ItemInfo.findall(QualityList.classname, info);
+	}
+
+	QualityList qualityList = new QualityList(owner, qualities);
+	if(!qualityList.isEmpty()) {info.add(qualityList);}
     }
 
     public static String getCount(List<ItemInfo> infos) {
