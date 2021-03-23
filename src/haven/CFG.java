@@ -29,6 +29,7 @@ public class CFG<T> {
     public static final CFG<Integer> AUTO_PICK_RADIUS = new CFG<>("general.auto_pick_radius", 55);
     
     public static final CFG<Boolean> UND_MINIFY_TREES = new CFG<>("display.minify_trees", false);
+    public static final CFG<Boolean> UND_UNLOCKED_ORTHO = new CFG<>("camera.unlocked_ortho", true);
 
     public static final CFG<Boolean> ALT_COMBAT_UI = new CFG<>("ui.combat.alt_ui", true);
     public static final CFG<Boolean> SIMPLE_COMBAT_OPENINGS = new CFG<>("ui.combat.simple_openings", true);

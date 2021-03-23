@@ -444,6 +444,13 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    if(tfield > 100)
 		release();
 	}
+ 
+	public void release() {
+	    if (!CFG.UND_UNLOCKED_ORTHO.get()) {
+		if(isometric && (tfield > 100))
+		    tangl = (float) (Math.PI * 0.5 * (Math.floor(tangl / (Math.PI * 0.5)) + 0.5));
+	    }
+	}
 
 	public boolean wheel(Coord c, int amount) {
 	    chfield(tfield + amount * 10);
