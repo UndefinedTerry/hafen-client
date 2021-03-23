@@ -29,6 +29,7 @@ package haven;
 import java.util.*;
 import java.util.function.*;
 import haven.render.*;
+
 import static haven.OCache.*;
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Skeleton.HasPose {
@@ -48,6 +49,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     private final Object removalLock = new Object();
     private GobDamageInfo damage;
     private Hitbox hitbox;
+    public Type type = null;
     public static final ChangeCallback CHANGED = new ChangeCallback() {
 	@Override
 	public void added(Gob ob) {
@@ -59,6 +61,25 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    ob.dispose();
 	}
     };
+    
+    public enum Type {
+	OTHER(0), DFRAME(1), TREE(2), BUSH(3), BOULDER(4), PLAYER(5), SIEGE_MACHINE(6), MAMMOTH(7), BAT(8), OLDTRUNK(9), GARDENPOT(10), MUSSEL(11), LOC_RESOURCE(12), FU_YE_CURIO(13), SEAL(14), EAGLE(15),
+	PLANT(16), MULTISTAGE_PLANT(17), PLANT_FALLOW(18),
+	MOB(32), WOLF(33), BEAR(34), LYNX(35), TROLL(38), WALRUS(39),
+	WOODEN_SUPPORT(64), STONE_SUPPORT(65), METAL_SUPPORT(66), TROUGH(67), BEEHIVE(68);
+	
+	public final int value;
+	
+	Type(int value) {
+	    this.value = value;
+	}
+	
+	boolean has(Type g) {
+	    if (g == null)
+		return false;
+	    return (value & g.value) != 0;
+	}
+    }
 
     public static class Overlay implements RenderTree.Node {
 	public final int id;
@@ -888,6 +909,70 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    hitbox = null;
 	    delattr(Hitbox.class);
 	}
+    }
+    
+    public void determineType(String name) {
+	if (name.startsWith("gfx/terobjs/trees") && !name.endsWith("log") && !name.endsWith("oldtrunk"))
+	    type = Type.TREE;
+	else if (name.endsWith("oldtrunk"))
+	    type = Type.OLDTRUNK;
+	else if (name.endsWith("terobjs/plants/carrot") || name.endsWith("terobjs/plants/hemp") || name.endsWith("terobjs/plants/turnip"))
+	    type = Type.MULTISTAGE_PLANT;
+	else if (name.endsWith("/fallowplant"))
+	    type = Type.PLANT_FALLOW;
+	else if (name.startsWith("gfx/terobjs/plants") && !name.endsWith("trellis"))
+	    type = Type.PLANT;
+	else if (name.startsWith("gfx/terobjs/bushes"))
+	    type = Type.BUSH;
+	else if (name.equals("gfx/borka/body"))
+	    type = Type.PLAYER;
+	else if (name.startsWith("gfx/terobjs/bumlings"))
+	    type = Type.BOULDER;
+	else  if (name.endsWith("vehicle/bram") || name.endsWith("vehicle/catapult"))
+	    type = Type.SIEGE_MACHINE;
+	else if (name.endsWith("/bear"))
+	    type = Type.BEAR;
+	else if (name.endsWith("/lynx"))
+	    type = Type.LYNX;
+	else if (name.endsWith("/wolf"))
+	    type = Type.WOLF;
+	else if (name.endsWith("/walrus"))
+	    type = Type.WALRUS;
+	else if (name.endsWith("/greyseal"))
+	    type = Type.SEAL;
+	else if (name.endsWith("/mammoth"))
+	    type = Type.MAMMOTH;
+	else if (name.endsWith("/troll"))
+	    type = Type.TROLL;
+	else if (name.endsWith("/bat"))
+	    type = Type.BAT;
+	else if (name.endsWith("/boar") ||
+	    name.endsWith("/badger") ||
+	    name.endsWith("/wolverine") ||
+	    name.endsWith("/adder") ||
+	    name.endsWith("/wolf") ||
+	    name.endsWith("/wildgoat"))
+	    type = Type.MOB;
+	else if (name.endsWith("/minesupport") || name.endsWith("/ladder"))
+	    type = Type.WOODEN_SUPPORT;
+	else if (name.endsWith("/column"))
+	    type = Type.STONE_SUPPORT;
+	else if (name.endsWith("/minebeam"))
+	    type = Type.METAL_SUPPORT;
+	else if (name.endsWith("/trough"))
+	    type = Type.TROUGH;
+	else if (name.endsWith("/beehive"))
+	    type = Type.BEEHIVE;
+	else if (name.endsWith("/dframe"))
+	    type = Type.DFRAME;
+	else if (name.endsWith("/gardenpot"))
+	    type = Type.GARDENPOT;
+	else if (name.endsWith("/mussels"))
+	    type = Type.MUSSEL;
+	else if (name.endsWith("/goldeneagle"))
+	    type = Type.EAGLE;
+	else
+	    type = Type.OTHER;
     }
     
     public final Placed placed = new Placed();

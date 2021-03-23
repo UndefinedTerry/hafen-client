@@ -31,7 +31,7 @@ import haven.render.*;
 
 public class ResDrawable extends Drawable {
     public final Indir<Resource> res;
-    public final Sprite spr;
+    public Sprite spr;
     MessageBuf sdt;
     // private double delay = 0; XXXRENDER
 
@@ -39,7 +39,31 @@ public class ResDrawable extends Drawable {
 	super(gob);
 	this.res = res;
 	this.sdt = new MessageBuf(sdt);
-	spr = Sprite.create(gob, res.get(), this.sdt.clone());
+	//spr = Sprite.create(gob, res.get(), this.sdt.clone());
+	init();
+    }
+    
+    public void init() {
+	Resource res = this.res.get();
+	if (this.gob.type == null)
+	    gob.determineType(res.name);
+    
+	MessageBuf sdtCopy = this.sdt.clone();
+	if (CFG.UND_MINIFY_TREES.get() && (gob.type == Gob.Type.TREE || gob.type == Gob.Type.BUSH) && !sdtCopy.eom()) {
+	    byte[] args = new byte[2];
+	    args[0] = (byte)sdtCopy.uint8();
+	    int fscale = 25;
+	    if (!sdtCopy.eom()) {
+		fscale = sdtCopy.uint8();
+		if (fscale > 25)
+		    fscale = 25;
+	    
+	    }
+	    args[1] = (byte)fscale;
+	    sdtCopy = new MessageBuf(args);
+	}
+ 
+	spr = Sprite.create(gob, res, sdtCopy);
     }
 
     public ResDrawable(Gob gob, Resource res) {

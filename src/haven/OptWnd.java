@@ -817,6 +817,9 @@ public class OptWnd extends Window {
 	int STEP = UI.scale(25);
 	y += STEP;
 	display.add(new CFGBox("Show flavor objects", CFG.DISPLAY_FLAVOR), new Coord(x, y));
+ 
+	y += STEP;
+	display.add(new CFGBox("Minify Trees (Restart required)", CFG.UND_MINIFY_TREES), x, y);
 
 	y += STEP;
 	display.add(new CFGBox("Show gob info", CFG.DISPLAY_GOB_INFO, "Enables damage and crop/tree growth stage displaying", true), x, y);
@@ -859,7 +862,7 @@ public class OptWnd extends Window {
 		}
 	    }
 	}, x, y);
-
+	
 	my = Math.max(my, y);
 	x += UI.scale(250);
 	y = 0;
