@@ -30,6 +30,7 @@ import haven.rx.CharterBook;
 
 import java.awt.Color;
 import java.util.*;
+import integrations.mapv4.MappingClient;
 
 public class Charlist extends Widget {
     public static final Tex bg = Resource.loadtex("gfx/hud/avakort");
@@ -163,6 +164,8 @@ public class Charlist extends Widget {
 		    if(sender == c.plb) {
 			wdgmsg("play", c.name);
 			Config.setPlayerName(c.name);
+			MappingClient.getInstance().SetPlayerName(c.name);
+			Config.initMapping();
 		    }
 		}
 	    }

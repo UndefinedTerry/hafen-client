@@ -39,6 +39,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.*;
 import java.util.List;
+import haven.MapFile.PMarker;
+import integrations.mapv4.MappingClient;
 
 import static haven.Action.*;
 import static haven.Inventory.*;
@@ -936,6 +938,14 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    }
 	    if(mapstore != null) {
 		MapFile file = MapFile.load(mapstore, mapfilename());
+		if(CFG.UND_MAPPING_ENABLED.get()) {
+		    MappingClient.getInstance().ProcessMap(file, (m) -> {
+			if(m instanceof PMarker) {
+			    return ((PMarker)m).color.equals(Color.GREEN);
+			}
+			return true;
+		    });
+		}
 		mmap = blpanel.add(new CornerMap(UI.scale(new Coord(133, 133)), file), minimapc);
 		mmap.lower();
 		mapfile = new MapWnd(file, map, Utils.getprefc("wndsz-map", UI.scale(new Coord(700, 500))), "Map");

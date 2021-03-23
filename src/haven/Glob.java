@@ -33,6 +33,7 @@ import java.util.*;
 import java.awt.Color;
 import haven.render.*;
 import haven.render.sl.*;
+import java.lang.ref.WeakReference;
 
 public class Glob {
     public final OCache oc = new OCache(this);
@@ -56,10 +57,13 @@ public class Glob {
     public final Map<String, CAttr> cattr = new HashMap<String, CAttr>();
     private Map<Indir<Resource>, Object> wmap = new HashMap<Indir<Resource>, Object>();
     
+    private static WeakReference<Glob> reference = new WeakReference<>(null);
+    
     public Glob(Session sess) {
 	this.sess = sess;
 	map = new MCache(sess);
 	party = new Party(this);
+	reference = new WeakReference<>(this);
     }
 
     @Resource.PublishedCode(name = "wtr")
@@ -67,6 +71,10 @@ public class Glob {
 	public Pipe.Op state();
 	public void update(Object... args);
 	public boolean tick(double dt);
+    }
+    
+    public static Glob getByReference() {
+	return reference.get();
     }
 
     public static class CAttr {

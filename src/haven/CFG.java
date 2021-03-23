@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import integrations.mapv4.MappingClient;
 
 public class CFG<T> {
     public static final CFG<String> VERSION = new CFG<>("version", "");
@@ -30,7 +31,9 @@ public class CFG<T> {
     
     public static final CFG<Boolean> UND_MINIFY_TREES = new CFG<>("display.minify_trees", false);
     public static final CFG<Boolean> UND_UNLOCKED_ORTHO = new CFG<>("camera.unlocked_ortho", true);
-
+    public static final CFG<Boolean> UND_MAPPING_ENABLED = new CFG<>("mapping.enabled", false);
+    public static final CFG<String> UND_MAPPING_ENDPOINT = new CFG<>("mapping.endpoint", "");
+    
     public static final CFG<Boolean> ALT_COMBAT_UI = new CFG<>("ui.combat.alt_ui", true);
     public static final CFG<Boolean> SIMPLE_COMBAT_OPENINGS = new CFG<>("ui.combat.simple_openings", true);
     public static final CFG<Boolean> SHOW_COMBAT_DMG = new CFG<>("ui.combat.show_dmg", true);

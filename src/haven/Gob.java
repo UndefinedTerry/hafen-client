@@ -29,6 +29,7 @@ package haven;
 import java.util.*;
 import java.util.function.*;
 import haven.render.*;
+import integrations.mapv4.MappingClient;
 
 import static haven.OCache.*;
 
@@ -394,7 +395,17 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	if(m != null)
 	    m.move(c);
 	this.rc = c;
+	if (isPlayer()) {
+	    if(CFG.UND_MAPPING_ENABLED.get()) {
+	        MappingClient.getInstance().CheckGridCoord(c);
+		MappingClient.getInstance().Track(id, c);
+	    }
+	}
 	this.a = a;
+    }
+    
+    public boolean isPlayer() {
+	return MapView.plgob == id;
     }
 
     public Coord3f getc() {

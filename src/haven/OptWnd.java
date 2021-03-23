@@ -33,7 +33,7 @@ import java.awt.event.KeyEvent;
 public class OptWnd extends Window {
     public static final Coord PANEL_POS = new Coord(220, 30);
     public static final Coord Q_TYPE_PADDING = new Coord(3, 0);
-    private final Panel display, general, camera, shortcuts;
+    private final Panel display, general, camera, shortcuts, mapping;
     public final Panel main, video, audio, keybind;
     public Panel current;
     private WidgetList<KeyBinder.ShortcutWidget> shortcutList;
@@ -570,10 +570,12 @@ public class OptWnd extends Window {
 	general = add(new Panel());
 	camera = add(new Panel());
 	shortcuts = add(new Panel());
+	mapping = add(new Panel());
 
 	addPanelButton("Video settings", 'v', video, 0, 0);
 	addPanelButton("Audio settings", 'a', audio, 0, 1);
 	addPanelButton("Camera settings", 'c', camera, 0, 2);
+	addPanelButton("Mapping settings", 'm', mapping, 0, 3);
 
 	addPanelButton("General settings", 'g', general, 1, 0);
 	addPanelButton("Display settings", 'd', display, 1, 1);
@@ -632,6 +634,7 @@ public class OptWnd extends Window {
 	initDisplayPanel();
 	initGeneralPanel();
 	initCameraPanel();
+	initMappingPanel();
 	main.pack();
 	chpanel(main);
     }
@@ -648,6 +651,41 @@ public class OptWnd extends Window {
     
     private void addPanelButton(String name, char key, Action action, int x, int y) {
 	main.add(new AButton(UI.scale(200), name, key, action), UI.scale(PANEL_POS.mul(x, y)));
+    }
+    
+    private void initMappingPanel() {
+        int x=0, y=0, my=0;
+        int STEP = UI.scale(25);
+    
+	y += STEP;
+ 
+	mapping.add(new Label("Auto-Mapper settings"), x, y);
+ 
+	y += STEP;
+    
+	mapping.add(new CFGBox("Tracking Enabled", CFG.UND_MAPPING_ENABLED), new Coord(x, y));
+	
+	y += STEP;
+ 
+	mapping.add(new Label("Mapping URL:"), x, y);
+ 
+	y += STEP;
+	
+	final TextEntry value = mapping.add(new TextEntry(UI.scale(250), CFG.UND_MAPPING_ENDPOINT.get()) {
+	    @Override
+	    public boolean keydown(KeyEvent ev) {
+		if (!parent.visible)
+		    return false;
+		CFG.UND_MAPPING_ENDPOINT.set(text);
+		return buf.key(ev);
+	    }
+	}, x, y);
+	
+	y+= STEP;
+	
+	mapping.add(new PButton(UI.scale(200), "Back", 27, main), new Coord(x, y));
+	
+	mapping.pack();
     }
 
     private void initCameraPanel() {

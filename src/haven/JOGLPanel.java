@@ -35,6 +35,7 @@ import com.jogamp.opengl.awt.*;
 import haven.render.*;
 import haven.render.States;
 import haven.render.gl.*;
+import integrations.mapv4.MappingClient;
 
 public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Directory, UI.Context {
     private static final boolean dumpbgl = true;
@@ -139,6 +140,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
     }
 
     private void initgl(GL gl) {
+	MappingClient.getInstance();
 	Collection<String> exts = Arrays.asList(gl.glGetString(GL.GL_EXTENSIONS).split(" "));
 	GLCapabilitiesImmutable caps = getChosenGLCapabilities();
 	gl.setSwapInterval((aswap = iswap()) ? 1 : 0);

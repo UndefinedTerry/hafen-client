@@ -34,6 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import static haven.Utils.*;
+import integrations.mapv4.MappingClient;
 
 public class Config {
     public static final File HOMEDIR = new File("").getAbsoluteFile();
@@ -280,6 +281,12 @@ public class Config {
     public static void setPlayerName(String playername) {
 	Config.playername = playername;
 	Reactor.PLAYER.onNext(userpath());
+    }
+    
+    public static void initMapping() {
+	MappingClient.getInstance().SetEndpoint(CFG.UND_MAPPING_ENDPOINT.get());
+	MappingClient.getInstance().EnableGridUploads(CFG.UND_MAPPING_ENABLED.get());
+	MappingClient.getInstance().EnableTracking(CFG.UND_MAPPING_ENABLED.get());
     }
     
     public static String userpath() {
