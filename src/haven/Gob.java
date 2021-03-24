@@ -395,9 +395,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	if(m != null)
 	    m.move(c);
 	this.rc = c;
-	if (isPlayer()) {
-	    if(CFG.UND_MAPPING_ENABLED.get()) {
+	if (CFG.UND_MAPPING_ENABLED.get()) {
+	    if(isPlayer()) {
 	        MappingClient.getInstance().CheckGridCoord(c);
+		MappingClient.getInstance().Track(id, c);
+	    }
+	    if(this.type == Type.PLAYER) {
 		MappingClient.getInstance().Track(id, c);
 	    }
 	}
