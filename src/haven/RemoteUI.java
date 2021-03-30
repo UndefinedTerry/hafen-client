@@ -75,6 +75,8 @@ public class RemoteUI implements UI.Receiver, UI.Runner {
 			int parent = msg.uint16();
 			Object[] pargs = msg.list();
 			ui.addwidget(id, parent, pargs);
+		    } else if(msg.type == RMessage.RMSG_WDGBAR) {
+			/* Ignore for now. */
 		    }
 		}
 		synchronized(sess) {
@@ -98,6 +100,7 @@ public class RemoteUI implements UI.Receiver, UI.Runner {
 
     public void init(UI ui) {
 	ui.sess = sess;
+	if(sess != null) {sess.ui = ui;}
     }
 
     public String title() {
