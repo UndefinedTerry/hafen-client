@@ -457,11 +457,11 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		    setupmods.remove(prev);
 	    }
 	    if(a != null) {
-		if(a instanceof RenderTree.Node) {
+		if(a instanceof RenderTree.Node && !a.skipRender) {
 		    try {
 			RUtils.multiadd(this.slots, (RenderTree.Node) a);
 		    } catch (Loading l) {
-			if(prev instanceof RenderTree.Node) {
+			if(prev instanceof RenderTree.Node && !prev.skipRender) {
 			    RUtils.multiadd(this.slots, (RenderTree.Node) prev);
 			    attr.put(ac, prev);
 			}
@@ -477,7 +477,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    if(prev != null)
 		prev.dispose();
 	    if(ac == Drawable.class) {
-		drawableUpdated();
+		if(a != prev) drawableUpdated();
 	    } else if(ac == GobHealth.class) {
 		GeneralGobInfo info = getattr(GeneralGobInfo.class);
 		if(info != null) {
@@ -671,8 +671,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	}
 	Map<Class<? extends GAttrib>, GAttrib> attr = cloneattrs();
 	for(GAttrib a : attr.values()) {
-	    if(a instanceof RenderTree.Node)
-		slot.add((RenderTree.Node)a);
+	    if(a instanceof RenderTree.Node && !a.skipRender)
+		slot.add((RenderTree.Node) a);
 	}
 	slots.add(slot);
     }
@@ -911,6 +911,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     }
     
     public void drawableUpdated() {
+	updateTags();
+	updateHitbox();
+	updateTreeVisibility();
+    }
+    
+    public void updateHitbox() {
 	Boolean hitboxEnabled = CFG.DISPLAY_GOB_HITBOX.get();
 	if(hitboxEnabled) {
 	    if(hitbox != null) {
@@ -926,68 +932,117 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     }
     
     public void determineType(String name) {
-	if (name.startsWith("gfx/terobjs/trees") && !name.endsWith("log") && !name.endsWith("oldtrunk"))
+	if(name.startsWith("gfx/terobjs/trees") && !name.endsWith("log") && !name.endsWith("oldtrunk"))
 	    type = Type.TREE;
-	else if (name.endsWith("oldtrunk"))
+	else if(name.endsWith("oldtrunk"))
 	    type = Type.OLDTRUNK;
-	else if (name.endsWith("terobjs/plants/carrot") || name.endsWith("terobjs/plants/hemp") || name.endsWith("terobjs/plants/turnip"))
+	else if(name.endsWith("terobjs/plants/carrot") || name.endsWith("terobjs/plants/hemp") || name.endsWith("terobjs/plants/turnip"))
 	    type = Type.MULTISTAGE_PLANT;
-	else if (name.endsWith("/fallowplant"))
+	else if(name.endsWith("/fallowplant"))
 	    type = Type.PLANT_FALLOW;
-	else if (name.startsWith("gfx/terobjs/plants") && !name.endsWith("trellis"))
+	else if(name.startsWith("gfx/terobjs/plants") && !name.endsWith("trellis"))
 	    type = Type.PLANT;
-	else if (name.startsWith("gfx/terobjs/bushes"))
+	else if(name.startsWith("gfx/terobjs/bushes"))
 	    type = Type.BUSH;
-	else if (name.equals("gfx/borka/body"))
+	else if(name.equals("gfx/borka/body"))
 	    type = Type.PLAYER;
-	else if (name.startsWith("gfx/terobjs/bumlings"))
+	else if(name.startsWith("gfx/terobjs/bumlings"))
 	    type = Type.BOULDER;
-	else  if (name.endsWith("vehicle/bram") || name.endsWith("vehicle/catapult"))
+	else if(name.endsWith("vehicle/bram") || name.endsWith("vehicle/catapult"))
 	    type = Type.SIEGE_MACHINE;
-	else if (name.endsWith("/bear"))
+	else if(name.endsWith("/bear"))
 	    type = Type.BEAR;
-	else if (name.endsWith("/lynx"))
+	else if(name.endsWith("/lynx"))
 	    type = Type.LYNX;
-	else if (name.endsWith("/wolf"))
+	else if(name.endsWith("/wolf"))
 	    type = Type.WOLF;
-	else if (name.endsWith("/walrus"))
+	else if(name.endsWith("/walrus"))
 	    type = Type.WALRUS;
-	else if (name.endsWith("/greyseal"))
+	else if(name.endsWith("/greyseal"))
 	    type = Type.SEAL;
-	else if (name.endsWith("/mammoth"))
+	else if(name.endsWith("/mammoth"))
 	    type = Type.MAMMOTH;
-	else if (name.endsWith("/troll"))
+	else if(name.endsWith("/troll"))
 	    type = Type.TROLL;
-	else if (name.endsWith("/bat"))
+	else if(name.endsWith("/bat"))
 	    type = Type.BAT;
-	else if (name.endsWith("/boar") ||
+	else if(name.endsWith("/boar") ||
 	    name.endsWith("/badger") ||
 	    name.endsWith("/wolverine") ||
 	    name.endsWith("/adder") ||
 	    name.endsWith("/wolf") ||
 	    name.endsWith("/wildgoat"))
 	    type = Type.MOB;
-	else if (name.endsWith("/minesupport") || name.endsWith("/ladder"))
+	else if(name.endsWith("/minesupport") || name.endsWith("/ladder"))
 	    type = Type.WOODEN_SUPPORT;
-	else if (name.endsWith("/column"))
+	else if(name.endsWith("/column"))
 	    type = Type.STONE_SUPPORT;
-	else if (name.endsWith("/minebeam"))
+	else if(name.endsWith("/minebeam"))
 	    type = Type.METAL_SUPPORT;
-	else if (name.endsWith("/trough"))
+	else if(name.endsWith("/trough"))
 	    type = Type.TROUGH;
-	else if (name.endsWith("/beehive"))
+	else if(name.endsWith("/beehive"))
 	    type = Type.BEEHIVE;
-	else if (name.endsWith("/dframe"))
+	else if(name.endsWith("/dframe"))
 	    type = Type.DFRAME;
-	else if (name.endsWith("/gardenpot"))
+	else if(name.endsWith("/gardenpot"))
 	    type = Type.GARDENPOT;
-	else if (name.endsWith("/mussels"))
+	else if(name.endsWith("/mussels"))
 	    type = Type.MUSSEL;
-	else if (name.endsWith("/goldeneagle"))
+	else if(name.endsWith("/goldeneagle"))
 	    type = Type.EAGLE;
 	else
 	    type = Type.OTHER;
     }
+
+    public void updateTreeVisibility() {
+	if(anyOf(Tag.TREE, Tag.BUSH)) {
+	    Drawable d = getattr(Drawable.class);
+	    Boolean needHide = CFG.HIDE_TREES.get();
+	    if(d != null && d.skipRender != needHide) {
+		d.skipRender = needHide;
+		glob.loader.defer(() -> setattr(d), null);
+	    }
+	}
+    }
     
     public final Placed placed = new Placed();
+    
+    private final Set<Tag> tags = new HashSet<>();
+    
+    private void updateTags() {
+	tags.clear();
+	Resource res = getres();
+	if(res != null) {
+	    String name = res.name;
+	    
+	    if(name.startsWith("gfx/terobjs/trees")) {
+		if(name.endsWith("log") || name.endsWith("oldtrunk")) {
+		    tags.add(Tag.LOG);
+		} else if(name.contains("stump")) {
+		    tags.add(Tag.STUMP);
+		} else {
+		    tags.add(Tag.TREE);
+		}
+	    }
+	    if(name.startsWith("gfx/terobjs/bushes")) {
+		tags.add(Tag.BUSH);
+	    }
+	}
+    }
+    
+    public boolean is(Tag tag) {
+	return tags.contains(tag);
+    }
+    
+    public boolean anyOf(Tag... tags) {
+	for (Tag tag : tags) {
+	    if(is(tag)) {return true;}
+	}
+	return false;
+    }
+    
+    private enum Tag {
+	TREE, BUSH, LOG, STUMP
+    }
 }
